@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as BooksAPI from './BooksAPI';
 import Book from './Book';
-import './SearchPage.css';
+import './App.css';
 
 function SearchPage({ history }) {
   const [query, setQuery] = useState('');
