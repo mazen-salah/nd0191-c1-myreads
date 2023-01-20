@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
-import "./MainPage.css";
+import "./App.css";
 
 function MainPage({ history }) {
   const [books, setBooks] = useState([]);
@@ -71,7 +71,7 @@ function MainPage({ history }) {
         </div>
       </div>
       <div className="open-search ">
-        <a onClick={() => history.push("/search")}>Add a book</a>
+        <a href="/search">Add a book</a>
       </div>
     </div>
   );
