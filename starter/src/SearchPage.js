@@ -1,74 +1,70 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as BooksAPI from './BooksAPI';
 import Book from './Book';
 import './SearchPage.css';
 
-class SearchPage extends Component {
-  state = {
-    query: '',
-    books: []
+function SearchPage({ history }) {
+  const [query, setQuery] = useState('');
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    searchBooks(query);
+  }, [query]);
+
+  const updateQuery = (q) => {
+    setQuery(q);
   }
 
-  updateQuery = (query) => {
-    this.setState({ query });
-    this.searchBooks(query);
-  }
-
-  searchBooks = (query) => {
-    if(query) {
-      BooksAPI.search(query).then((books) => {
+  const searchBooks = (q) => {
+    if(q) {
+      BooksAPI.search(q).then((books) => {
         if(books.length > 0){
-          this.setState({ books });
+          setBooks(books);
         }else{
-          this.setState({ books: [] });
+          setBooks([]);
         }
       });
     }else{
-      this.setState({ books: [] });
+      setBooks([]);
     }
   }
 
-  handleShelfChange = (book, shelf) => {
+  const handleShelfChange = (book, shelf) => {
     BooksAPI.update(book, shelf).then(() => {
-      this.setState(state => ({
-        books: state.books.map(b => {
-          if(b.id === book.id) {
-            b.shelf = shelf
-          }
-          return b;
-        })
+      setBooks(state => state.map(b => {
+        if(b.id === book.id) {
+          b.shelf = shelf
+        }
+        return b;
       }))
     });
   }
 
-  render() {
-    const { query, books } = this.state;
-
-    return (
-      <div className="search-books">
-        <div className="search-books-bar">
-          <a className="close-search" href='/'>Close</a>
-          <div className="search-books-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search by title or author"
-              value={query}
-              onChange={(event) => this.updateQuery(event.target.value)}
-            />
-          </div>
-        </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-            {books.map((book) => (
-              <li key={book.id}>
-                <Book book={book} onShelfChange={this.handleShelfChange} />
-              </li>
-            ))}
-          </ol>
+  return (
+    <div className="search-books">
+      <div className="search-books-bar">
+        <a className="close-search" href='/'>Close</a>
+        <div className="search-books-input-wrapper">
+          <input
+            type="text"
+            placeholder="Search by title or author"
+            value={query}
+            onChange={(event) => updateQuery(event.target.value)}
+          />
         </div>
       </div>
-    );
-  }
+      <div className="search-books-results">
+        <ol className="books-grid">
+          {books.map((book) => (
+            <li key={book.id}>
+              <Book book={book} onShelfChange={handleShelfChange} />
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
 }
 
 export default SearchPage;
+
